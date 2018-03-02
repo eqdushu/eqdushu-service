@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<encoding>UTF-8</encoding>
+		<encoder>
+			<pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%thread]
+				[%logger:%line] --%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="interfaceFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoding>UTF-8</encoding>
+		<File>${log.dir}/interface.log</File>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<encoder>
+            <pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger:%line] --%msg%n</pattern>
+        </encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.dir}/bak/interface.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="errorLogFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender -->
+		<encoding>UTF-8</encoding>
+		<File>${log.dir}/error.log</File>
+		<encoder>
+            <pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger:%line] --%msg%n</pattern>
+        </encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.dir}/bak/error-%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="warnLogFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoding>UTF-8</encoding>
+		<File>${log.dir}/warn.log</File>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<encoder>
+            <pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger:%line] --%msg%n</pattern>
+        </encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.dir}/bak/warn.%d{yyyy-MM-dd}.log</FileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+
+	<appender name="infoLogFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoding>UTF-8</encoding>
+		<File>${log.dir}/info.log</File>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<encoder>
+            <pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger:%line] --%msg%n</pattern>
+        </encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.dir}/bak/info.%d{yyyy-MM-dd}.log</FileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="debugLogFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoding>UTF-8</encoding>
+		<File>${log.dir}/debug.log</File>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>DEBUG</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<encoder>
+            <pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger:%line] --%msg%n</pattern>
+        </encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.dir}/bak/debug.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="appServerRpcFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<Encoding>UTF-8</Encoding>
+		<File>${log.dir}/rpc_provider.log</File>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.dir}/bak/rpc_provider-%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+            <pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger:%line] --%msg%n</pattern>
+        </encoder>
+	</appender>
+
+	<appender name="eventFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender -->
+		<encoding>UTF-8</encoding>
+		<File>${log.dir}/event.log</File>
+		<encoder>
+            <pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%logger:%line] --%msg%n</pattern>
+        </encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.dir}/bak/event-%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<logger name="com.eqdushu.server" level="${log.level}"
+		additivity="false">
+		<appender-ref ref="errorLogFile" />
+		<appender-ref ref="warnLogFile" />
+		<appender-ref ref="infoLogFile" />
+		<appender-ref ref="debugLogFile" />
+	</logger>
+
+	<logger name="com.eqdushu.server.event" level="INFO"
+		additivity="false">
+		<appender-ref ref="eventFile" />
+	</logger>
+
+	<logger name="com.eqdushu.server.rpc" level="ERROR"
+		additivity="false">
+		<appender-ref ref="appServerRpcFile" />
+	</logger>
+
+	<logger name="com.eqdushu.server.controller" level="INFO"
+		additivity="false">
+		<appender-ref ref="interfaceFile" />
+	</logger>
+
+
+	<root level="${log.level}">
+		<appender-ref ref="stdout" />
+	</root>
+</configuration>

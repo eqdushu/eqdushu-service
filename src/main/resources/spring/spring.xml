@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+						http://www.springframework.org/schema/aop   http://www.springframework.org/schema/aop/spring-aop.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+						http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+						http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+
+	<!-- Scan classpath for annotations (eg: @Service, @Repository etc) -->
+	<context:component-scan
+		base-package="com.eqdushu.server.service, com.eqdushu.server.mapper, com.eqdushu.server.event, com.eqdushu.server.vo" />
+
+	<bean class="com.eqdushu.server.system.AppContext" />
+	<bean class="com.eqdushu.server.system.AppInitializer" />
+
+	<util:properties id="appProperties" location="classpath:app.properties" />
+	<util:properties id="pushProperties" location="classpath:push.properties" />
+	<util:properties id="neoProperties" location="classpath:neo.properties" />
+
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"
+			value="com.eqdushu.server.system.AppConfiguration.init" />
+		<property name="arguments">
+			<list>
+				<ref bean="appProperties" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"
+			value="com.eqdushu.server.utils.push.PushUtil.init" />
+		<property name="arguments">
+			<list>
+				<ref bean="pushProperties" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"
+			value="com.eqdushu.server.utils.blockchain.NeoUtil.init" />
+		<property name="arguments">
+			<list>
+				<ref bean="neoProperties" />
+			</list>
+		</property>
+	</bean>
+
+	<import resource="spring-db.xml" />
+	<import resource="spring-cache.xml" />
+	<import resource="spring-event.xml" />
+	<import resource="spring-task.xml" />
+	
+</beans>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eqdushu.server.mapper.user.UserMapper">
+
+	<!-- 配置 产品 sqlMap -->
+	<resultMap id="userMap" type="com.eqdushu.server.domain.user.User">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="company_id" property="companyId" jdbcType="BIGINT" />
+		<result column="company" property="company" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="email" property="email" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="salt" property="salt" jdbcType="VARCHAR" />
+		<result column="user_type" property="userType" jdbcType="VARCHAR" />
+		<result column="term_type" property="termType" jdbcType="VARCHAR" />
+		<result column="channel" property="channel" jdbcType="VARCHAR" />
+		<result column="status" property="status" jdbcType="VARCHAR" />
+		<result column="deleted" property="deleted" jdbcType="BOOLEAN" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<sql id="base_column_list">
+		id,company_id,company,phone,name,email,password,salt,user_type,term_type,channel,status,deleted,create_time,update_time,user_name
+	</sql>
+	
+	<sql id="insert_column_list">
+		company_id,company,phone,name,email,password,salt,user_type,term_type,channel,status,deleted,create_time,update_time,user_name
+	</sql>
+
+	<insert id="create" useGeneratedKeys="true" keyProperty="id" parameterType="com.eqdushu.server.domain.user.User">
+		insert into t_user(
+		<include refid="insert_column_list" />
+		)values
+		(#{companyId,jdbcType=BIGINT},#{company,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{password,jdbcType=VARCHAR},#{salt,jdbcType=VARCHAR},
+		#{userType,jdbcType=VARCHAR},#{termType,jdbcType=VARCHAR},#{channel,jdbcType=VARCHAR},#{status,jdbcType=VARCHAR},
+		#{deleted,jdbcType=BOOLEAN},#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP},#{userName,jdbcType=VARCHAR})
+	</insert>
+
+	<update id="update" parameterType="com.eqdushu.server.domain.user.User">
+		update t_user
+		<set>
+			<if test="password != null">
+				password = #{password},
+			</if>
+			<if test="salt != null">
+				salt = #{salt},
+			</if>
+			<if test="userType != null">
+				user_type = #{userType},
+			</if>
+			<if test="companyId != null">
+				company_id = #{companyId},
+			</if>
+			<if test="company != null">
+				company = #{company},
+			</if>
+			<if test="channel != null">
+				channel = #{channel},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+			<if test="userName != null">
+				user_name = #{userName},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<update id="updateCompanyNull" parameterType="java.lang.Long">
+		update t_user
+		set company_id = null
+		where id = #{id}
+	</update>
+
+	<select id="getById" resultMap="userMap" parameterType="java.lang.Long">
+		select
+		<include refid="base_column_list" />
+		from t_user where id=#{id}
+	</select>
+	
+	<update id="deleteById" parameterType="java.lang.Long">
+		update t_user set deleted=true where id = #{id}
+	</update>
+	
+	<select id="listByIds" resultMap="userMap" parameterType="java.util.List">
+		select
+		<include refid="base_column_list" />
+		from t_user where id in
+		<foreach item="item" index="index" collection="ids" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	
+	<select id="getByTypeAndName" resultMap="userMap">
+		select
+		<include refid="base_column_list" />
+		from t_user 
+		WHERE name=#{name}
+        <if test="type !=null">
+            and user_type = #{type,jdbcType=VARCHAR}
+        </if>
+	</select>
+	
+	<select id="getByTypeAndPhone" resultMap="userMap">
+		select
+		<include refid="base_column_list" />
+		from t_user where phone=#{phone}
+		<if test="type !=null">
+            and user_type = #{type,jdbcType=VARCHAR}
+        </if>
+	</select>
+	
+	<select id="getByTypeAndEmail" resultMap="userMap">
+		select
+		<include refid="base_column_list" />
+		from t_user where email=#{email}
+		<if test="type !=null">
+            and user_type = #{type,jdbcType=VARCHAR}
+        </if>
+	</select>
+	
+	<select id="listByCompanyId" resultMap="userMap">
+		select
+		<include refid="base_column_list" />
+		from t_user where company_id = #{companyId,jdbcType=BIGINT}
+	</select>
+
+	<!-- 查询管理员数量 -->
+	<select id="getAdminNum" parameterType="java.lang.Long" resultType="java.lang.Integer">
+		select count(1) num from t_user where company_id=#{companyId} and user_type='admin'
+	</select>
+</mapper>

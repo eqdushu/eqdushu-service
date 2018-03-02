@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eqdushu.server.mapper.book.BookMapper">
+
+
+	<resultMap id="bookMap" type="com.eqdushu.server.domain.book.Book">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="isbn" property="isbn" jdbcType="VARCHAR" />
+		<result column="book_title" property="bookTitle" jdbcType="VARCHAR" />
+		<result column="book_img" property="bookImg" jdbcType="VARCHAR" />
+		<result column="book_author" property="bookAuthor" jdbcType="VARCHAR" />
+		<result column="book_publisher" property="bookPublisher" jdbcType="VARCHAR" />
+		<result column="book_summary" property="bookSummary" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+		<result column="isborrow" property="isBorrow" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<resultMap id="bookRelationMap" type="com.eqdushu.server.domain.book.BookRelation">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="company_id" property="companyId" jdbcType="BIGINT" />
+		<result column="book_id" property="bookId" jdbcType="BIGINT" />
+		<result column="isbn" property="isbn" jdbcType="VARCHAR" />
+		<result column="remain_num" property="remainNum" jdbcType="BIGINT" />
+		<result column="total_num" property="totalNum" jdbcType="BIGINT" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<resultMap id="bookBorrowMap" type="com.eqdushu.server.domain.book.BookBorrow">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="user_id" property="userId" jdbcType="BIGINT" />
+		<result column="company_id" property="companyId" jdbcType="BIGINT" />
+		<result column="book_id" property="bookId" jdbcType="BIGINT" />
+		<result column="isbn" property="isbn" jdbcType="VARCHAR" />
+		<result column="borrow_sts" property="borrowSts" jdbcType="VARCHAR" />
+		<result column="borrow_beg_dt" property="borrowBegDt" jdbcType="VARCHAR" />
+		<result column="borrow_beg_tm" property="borrowBegTm" jdbcType="VARCHAR" />
+		<result column="borrow_end_dt" property="borrowEndDt" jdbcType="VARCHAR" />
+		<result column="borrow_end_tm" property="borrowEndTm" jdbcType="VARCHAR" />
+
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+
+		<result column="book_title" property="bookTitle" jdbcType="VARCHAR" />
+		<result column="book_img" property="bookImg" jdbcType="VARCHAR" />
+		<result column="book_author" property="bookAuthor" jdbcType="VARCHAR" />
+
+	</resultMap>
+
+
+	<resultMap id="bookInLibMap" type="com.eqdushu.server.domain.book.BookInLibJrl">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="user_id" property="userId" jdbcType="BIGINT" />
+		<result column="company_id" property="companyId" jdbcType="BIGINT" />
+		<result column="book_id" property="bookId" jdbcType="BIGINT" />
+		<result column="isbn" property="isbn" jdbcType="VARCHAR" />
+		<result column="sts" property="sts" jdbcType="VARCHAR" />
+
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+
+		<result column="book_title" property="bookTitle" jdbcType="VARCHAR" />
+		<result column="book_img" property="bookImg" jdbcType="VARCHAR" />
+		<result column="book_author" property="bookAuthor" jdbcType="VARCHAR" />
+		<result column="book_publisher" property="bookPublisher" jdbcType="VARCHAR" />
+		<result column="book_summary" property="bookSummary" jdbcType="VARCHAR" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="borrow_beg_dt" property="borrowBegDt" jdbcType="VARCHAR" />
+		<result column="borrow_end_dt" property="borrowEndDt" jdbcType="VARCHAR" />
+
+	</resultMap>
+	<sql id="base_column_list">
+		id,isbn,book_title,book_img,book_author,book_publisher,book_summary,create_time,update_time
+	</sql>
+	<sql id="insert_column_list">
+		isbn,book_title,book_img,book_author,book_publisher,book_summary,create_time,update_time
+	</sql>
+
+	<sql id="base_relation_column_list">
+		id,company_id,book_id,isbn,remain_num,total_num,create_time,update_time
+	</sql>
+	<sql id="insert_relation_column_list">
+		company_id,book_id,isbn,remain_num,total_num,create_time,update_time
+	</sql>
+
+	<sql id="base_borrow_column_list">
+		id,user_id,company_id,book_id,isbn,borrow_beg_dt,borrow_beg_tm,borrow_end_dt,borrow_sts,create_time,update_time
+	</sql>
+	<sql id="insert_borrow_column_list">
+		user_id,company_id,book_id,isbn,borrow_beg_dt,borrow_beg_tm,borrow_end_dt,borrow_end_tm,borrow_sts,create_time,update_time
+	</sql>
+
+	<!--  获取用户所在公司所有的书籍详情 -->
+	<select id="getLibrary" resultMap="bookMap" parameterType="java.lang.Long">
+		select b.id,b.isbn,b.book_title,b.book_img,b.book_author,b.book_publisher,b.book_summary,b.create_time,b.update_time,case when a.remain_num>0 then 0 else 1 end isborrow
+		from t_book_relation a,t_book_info b where a.company_id=#{1} and a.isbn=b.isbn
+	</select>
+
+	<!-- 通过IDBN号查询单本书籍的详情-->
+	<select id="getBookByIsbn" resultMap="bookMap" parameterType="java.lang.String">
+		select
+		<include refid="base_column_list" />
+		from t_book_info where isbn=#{1}
+	</select>
+
+	<!-- 新增书籍详情-->
+	<insert id="createBook" useGeneratedKeys="true" keyProperty="id" parameterType="com.eqdushu.server.domain.book.Book">
+		insert into t_book_info(
+		<include refid="insert_column_list" />
+		)values
+		(#{isbn,jdbcType=VARCHAR},#{bookTitle,jdbcType=VARCHAR},
+		#{bookImg,jdbcType=VARCHAR},#{bookAuthor,jdbcType=VARCHAR},#{bookPublisher,jdbcType=VARCHAR},#{bookSummary,jdbcType=VARCHAR},
+		#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP})
+	</insert>
+
+	<!-- 新增书籍与企业关系信息详情-->
+	<insert id="createBookRelation" useGeneratedKeys="true" keyProperty="id" parameterType="com.eqdushu.server.domain.book.BookRelation">
+		insert into t_book_relation(
+		<include refid="insert_relation_column_list" />
+		)values
+		(#{companyId,jdbcType=BIGINT},#{bookId,jdbcType=BIGINT},
+		#{isbn,jdbcType=VARCHAR},#{remainNum,jdbcType=BIGINT},#{totalNum,jdbcType=BIGINT},#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP})
+	</insert>
+
+	<!-- 登记用户借阅信息 -->
+	<insert id="createBorrow" useGeneratedKeys="true" keyProperty="id" parameterType="com.eqdushu.server.domain.book.BookBorrow">
+		insert into t_book_borrow(
+		<include refid="insert_borrow_column_list" />
+		)values
+		(#{userId,jdbcType=BIGINT},#{companyId,jdbcType=BIGINT},
+		#{bookId,jdbcType=BIGINT},#{isbn,jdbcType=VARCHAR},#{borrowBegDt,jdbcType=DATE},#{borrowBegTm,jdbcType=TIME},
+		#{borrowEndDt,jdbcType=DATE},#{borrowEndTm,jdbcType=TIME},#{borrowSts,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP})
+	</insert>
+	<!-- 删减对应书籍的数量 -->
+	<update id="deleteNumByCompanyId" parameterType="com.eqdushu.server.domain.book.BookBorrow">
+		update t_book_relation set remain_num=remain_num-1 where remain_num >= 1 and company_id=#{companyId} and isbn=#{isbn}
+	</update>
+
+	<!--查询企业对应书籍是否存在-->
+	<select id="getBookRelationByCompanyIdIsbn" resultMap="bookRelationMap" parameterType="com.eqdushu.server.domain.book.BookRelation">
+		select
+		<include refid="base_relation_column_list" />
+		from t_book_relation where company_id=#{companyId} and isbn=#{isbn}
+	</select>
+
+	<!-- 查询企业书籍借阅详情 -->
+	<select id="getBorrowInfoByCompanyId" resultMap="bookBorrowMap" parameterType="com.eqdushu.server.domain.book.PageQuery">
+		select
+		a.id,a.user_id,a.company_id,a.book_id,a.isbn,a.borrow_beg_dt,a.borrow_beg_tm,a.borrow_end_dt,borrow_end_tm,a.borrow_sts,a.create_time,a.update_time,b.book_title,b.book_img,b.book_author
+		from t_book_borrow a,t_book_info b where a.company_id=#{id} and a.isbn=b.isbn  limit #{startNum},#{pageNum}
+	</select>
+
+	<!-- 查询个人借阅详情 -->
+	<select id="getBorrowInfoByUsrId" resultMap="bookBorrowMap" parameterType="com.eqdushu.server.domain.book.PageQuery">
+		select
+		a.id,a.user_id,a.company_id,a.book_id,a.isbn,a.borrow_beg_dt,a.borrow_beg_tm,a.borrow_end_dt,borrow_end_tm,a.borrow_sts,a.create_time,a.update_time,b.book_title,b.book_img,b.book_author
+		from t_book_borrow a,t_book_info b where a.user_id=#{id} and a.isbn=b.isbn  limit #{startNum},#{pageNum}
+	</select>
+
+	<!-- 修改企业借阅信息中的状态 -->
+	<update id="updateBorrowSts" parameterType="com.eqdushu.server.domain.book.BookBorrow">
+		update t_book_borrow set borrow_sts=#{borrowSts} where user_id=#{userId} and company_id=#{companyId} and isbn=#{isbn}
+	</update>
+
+	<!-- 增加企业书籍关系中的剩余数量 -->
+	<update id="addNumByCompanyId" parameterType="com.eqdushu.server.domain.book.BookBorrow">
+		update t_book_relation set remain_num=remain_num+1 where company_id=#{companyId} and isbn=#{isbn}
+	</update>
+
+	<!-- 增加企业书籍关系中的总数量和剩余数量 -->
+	<update id="addAllNumByCompanyId" parameterType="com.eqdushu.server.domain.book.BookRelation">
+		update t_book_relation set remain_num=remain_num+1,total_num=total_num+1 where company_id=#{companyId} and isbn=#{isbn}
+	</update>
+
+
+	<sql id="base_column_inlibjrl">
+		id,user_id,company_id,book_id,sts,isbn,create_time,update_time
+	</sql>
+	<!-- 登记用户入库申请流水 -->
+	<insert id="createInLibReq" useGeneratedKeys="true" keyProperty="id" parameterType="com.eqdushu.server.domain.book.BookInLibJrl">
+		insert into t_book_inlibjrl(user_id,company_id,book_id,sts,isbn,create_time,update_time)values
+		(#{userId,jdbcType=BIGINT},#{companyId,jdbcType=BIGINT},
+		#{bookId,jdbcType=BIGINT},#{sts,jdbcType=VARCHAR},#{isbn,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP})
+	</insert>
+
+	<!-- 管理查询所有入库申请流水 -->
+	<select id="getAllInLibJrl" resultMap="bookInLibMap" parameterType="java.lang.Long">
+select
+		a.user_id,a.company_id,a.book_id,a.sts,a.isbn,a.create_time,a.update_time,b.book_title,b.book_img,b.book_author,b.book_publisher,b.book_summary,c.name,d.borrow_beg_dt,d.borrow_end_dt
+		from t_book_inlibjrl a,t_book_info b,t_user c,t_book_borrow d where a.company_id=#{1} and a.isbn=b.isbn and a.sts='U' and a.user_id=c.id and d.company_id=a.company_id and d.isbn=a.isbn
+	</select>
+
+	<update id="updReqSts" parameterType="com.eqdushu.server.domain.book.BookInLibJrl">
+		update t_book_inlibjrl set sts=#{sts} where company_id=#{companyId} and isbn=#{isbn}
+	</update>
+
+
+</mapper>

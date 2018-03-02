@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+		<encoding>UTF-8</encoding>
+		<encoder>
+			<pattern>[%date{yyyy-MM-dd HH:mm:ss}] [%-5level] [%thread]
+				[%logger:%line] --%msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="interfaceFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoding>UTF-8</encoding>
+		<File>${log.dir}/elk/interface.log</File>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<encoder
+			class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<pattern>
+					<pattern>
+						{
+						"tags": ["httpApi"],
+						"project": "appserver",
+						"timestamp": "%date{\"yyyy-MM-dd'T'HH:mm:ss,SSSZ\"}",
+						"log_level": "%level",
+						"thread": "%thread",
+						"class_name": "%class",
+						"line_number": "",
+						"message": "%message",
+						"stack_trace": "%exception{5}",
+						"req_id": "%X{reqId}",
+						"elapsed_time": "#asLong{%X{elapsedTime}}"
+						}
+					</pattern>
+				</pattern>
+			</providers>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.dir}/bak/interface.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="errorLogFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender -->
+		<encoding>UTF-8</encoding>
+		<File>${log.dir}/elk/error.log</File>
+		<encoder
+			class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<pattern>
+					<pattern>
+						{
+						"tags": [],
+						"project": "appserver",
+						"timestamp": "%date{\"yyyy-MM-dd'T'HH:mm:ss,SSSZ\"}",
+						"log_level": "%level",
+						"thread": "%thread",
+						"class_name": "%class",
+						"line_number": "#asLong{%line}",
+						"message": "%message",
+						"stack_trace": "%exception{5}",
+						"req_id": "%X{reqId}",
+						"elapsed_time": "#asLong{%X{elapsedTime}}"
+						}
+					</pattern>
+				</pattern>
+			</providers>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>ERROR</level>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.dir}/bak/error-%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="warnLogFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoding>UTF-8</encoding>
+		<File>${log.dir}/elk/warn.log</File>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>WARN</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<encoder
+			class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<pattern>
+					<pattern>
+						{
+						"tags": [],
+						"project": "appserver",
+						"timestamp": "%date{\"yyyy-MM-dd'T'HH:mm:ss,SSSZ\"}",
+						"log_level": "%level",
+						"thread": "%thread",
+						"class_name": "%class",
+						"line_number": "#asLong{%line}",
+						"message": "%message",
+						"stack_trace": "%exception{5}",
+						"req_id": "%X{reqId}",
+						"elapsed_time": "#asLong{%X{elapsedTime}}"
+						}
+					</pattern>
+				</pattern>
+			</providers>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.dir}/bak/warn.%d{yyyy-MM-dd}.log</FileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+
+	<appender name="infoLogFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoding>UTF-8</encoding>
+		<File>${log.dir}/elk/info.log</File>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>INFO</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<encoder
+			class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<pattern>
+					<pattern>
+						{
+						"tags": [],
+						"project": "appserver",
+						"timestamp": "%date{\"yyyy-MM-dd'T'HH:mm:ss,SSSZ\"}",
+						"log_level": "%level",
+						"thread": "%thread",
+						"class_name": "%class",
+						"line_number": "#asLong{%line}",
+						"message": "%message",
+						"stack_trace": "%exception{5}",
+						"req_id": "%X{reqId}",
+						"elapsed_time": "#asLong{%X{elapsedTime}}"
+						}
+					</pattern>
+				</pattern>
+			</providers>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.dir}/bak/info.%d{yyyy-MM-dd}.log</FileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="debugLogFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoding>UTF-8</encoding>
+		<File>${log.dir}/elk/debug.log</File>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>DEBUG</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<encoder
+			class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<pattern>
+					<pattern>
+						{
+						"tags": [],
+						"project": "appserver",
+						"timestamp": "%date{\"yyyy-MM-dd'T'HH:mm:ss,SSSZ\"}",
+						"log_level": "%level",
+						"thread": "%thread",
+						"class_name": "%class",
+						"line_number": "#asLong{%line}",
+						"message": "%message",
+						"stack_trace": "%exception{5}",
+						"req_id": "%X{reqId}",
+						"elapsed_time": "#asLong{%X{elapsedTime}}"
+						}
+					</pattern>
+				</pattern>
+			</providers>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>${log.dir}/bak/debug.%d{yyyy-MM-dd}.log
+			</FileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<appender name="appServerRpcFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<Encoding>UTF-8</Encoding>
+		<File>${log.dir}/elk/rpc_provider.log</File>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.dir}/bak/rpc_provider-%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder
+			class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<pattern>
+					<pattern>
+						{
+						"tags": ["rpc"],
+						"project": "appserver",
+						"timestamp": "%date{\"yyyy-MM-dd'T'HH:mm:ss,SSSZ\"}",
+						"log_level": "%level",
+						"thread": "%thread",
+						"class_name": "%class",
+						"line_number": "#asLong{%line}",
+						"message": "%message",
+						"stack_trace": "%exception{5}",
+						"req_id": "%X{reqId}",
+						"elapsed_time": "#asLong{%X{elapsedTime}}"
+						}
+					</pattern>
+				</pattern>
+			</providers>
+		</encoder>
+	</appender>
+
+	<appender name="eventFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender -->
+		<encoding>UTF-8</encoding>
+		<File>${log.dir}/elk/event.log</File>
+		<encoder
+			class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<pattern>
+					<pattern>
+						{
+						"tags": ["event"],
+						"project": "appserver",
+						"timestamp": "%date{\"yyyy-MM-dd'T'HH:mm:ss,SSSZ\"}",
+						"log_level": "%level",
+						"thread": "%thread",
+						"class_name": "%class",
+						"line_number": "#asLong{%line}",
+						"message": "%message",
+						"stack_trace": "%exception{5}",
+						"req_id": "%X{reqId}",
+						"elapsed_time": "#asLong{%X{elapsedTime}}"
+						}
+					</pattern>
+				</pattern>
+			</providers>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>${log.dir}/bak/event-%d{yyyy-MM-dd}.log
+			</fileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+	</appender>
+
+	<logger name="com.equdushu.server" level="${log.level}"
+		additivity="false">
+		<appender-ref ref="errorLogFile" />
+		<appender-ref ref="warnLogFile" />
+		<appender-ref ref="infoLogFile" />
+		<appender-ref ref="debugLogFile" />
+	</logger>
+
+	<logger name="com.equdushu.server.event" level="INFO"
+		additivity="false">
+		<appender-ref ref="eventFile" />
+	</logger>
+
+	<logger name="com.equdushu.server.rpc" level="ERROR"
+		additivity="false">
+		<appender-ref ref="appServerRpcFile" />
+	</logger>
+
+	<logger name="com.equdushu.server.controller" level="INFO"
+		additivity="false">
+		<appender-ref ref="interfaceFile" />
+	</logger>
+
+
+	<root level="${log.level}">
+		<appender-ref ref="stdout" />
+	</root>
+</configuration>

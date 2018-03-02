@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:c="http://www.springframework.org/schema/c" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+	<bean id="applicationEventMulticaster"
+		class="com.eqdushu.server.system.DistributiveEventMulticaster">
+		<property name="syncEventMulticaster">
+			<bean
+				class="org.springframework.context.event.SimpleApplicationEventMulticaster" />
+		</property>
+		<property name="asyncEventMulticaster">
+			<bean
+				class="org.springframework.context.event.SimpleApplicationEventMulticaster"
+				p:taskExecutor-ref="taskExecutor" p:errorHandler-ref="eventErrorHandler" />
+		</property>
+	</bean>
+
+	<task:executor id="taskExecutor" pool-size="4-8"
+		queue-capacity="100" rejection-policy="CALLER_RUNS" keep-alive="120" />
+
+	<bean id="eventErrorHandler"
+		class="com.eqdushu.server.event.handler.EventErrorHandler" />
+</beans>

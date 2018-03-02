@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eqdushu.server.mapper.user.UserExtraMapper">
+
+	<!-- 配置 产品 sqlMap -->
+	<resultMap id="userExtraMap" type="com.eqdushu.server.domain.user.UserExtra">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="user_id" property="userId" jdbcType="BIGINT" />
+		<result column="user_name" property="userName" jdbcType="VARCHAR" />
+		<result column="uuid" property="uuid" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="device_id" property="deviceId" jdbcType="VARCHAR" />
+		<result column="user_type" property="userType" jdbcType="VARCHAR" />
+		<result column="term_type" property="termType" jdbcType="VARCHAR" />
+		<result column="company_id" property="companyId" jdbcType="BIGINT" />
+		<result column="company" property="company" jdbcType="VARCHAR" />
+		<result column="channel" property="channel" jdbcType="VARCHAR" />
+		<result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<sql id="base_column_list">
+		id,user_id,user_name,uuid,phone,device_id,user_type,term_type,company_id,company,channel,create_time,update_time
+	</sql>
+	
+	<sql id="insert_column_list">
+		user_id,user_name,uuid,phone,device_id,user_type,term_type,company_id,company,channel,create_time,update_time
+	</sql>
+
+	<insert id="create" useGeneratedKeys="true" keyProperty="id" parameterType="com.eqdushu.server.domain.user.UserExtra">
+		insert into t_user_extra(
+		<include refid="insert_column_list" />
+		)values
+		(#{userId,jdbcType=BIGINT},#{userName,jdbcType=VARCHAR},
+		#{uuid,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},#{deviceId,jdbcType=VARCHAR},
+		#{userType,jdbcType=VARCHAR},#{termType,jdbcType=VARCHAR},#{companyId,jdbcType=BIGINT},#{company,jdbcType=VARCHAR},
+		#{channel,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP})
+	</insert>
+
+	<update id="update" parameterType="com.eqdushu.server.domain.user.UserExtra">
+		update t_user_extra
+		<set>
+			<if test="userName != null">
+				user_name = #{userName},
+			</if>
+			<if test="userType != null">
+				user_type = #{userType},
+			</if>
+			<if test="companyId != null">
+				company_id = #{companyId},
+			</if>
+			<if test="company != null">
+				company = #{company},
+			</if>
+			<if test="uuid != null">
+				uuid = #{uuid},
+			</if>
+			<if test="deviceId != null">
+				device_id = #{deviceId},
+			</if>
+			<if test="channel != null">
+				channel = #{channel},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+		</set>
+		where user_id = #{userId}
+	</update>
+
+
+	<select id="getByUserId" resultMap="userExtraMap" parameterType="java.lang.Long">
+		select
+		<include refid="base_column_list" />
+		from t_user_extra where user_id=#{userId}
+	</select>
+	
+	<select id="getByUuid" resultMap="userExtraMap" parameterType="java.lang.String">
+		select
+		<include refid="base_column_list" />
+		from t_user_extra where uuid=#{uuid}
+	</select>
+
+	<select id="listByUserIds" resultMap="userExtraMap" parameterType="java.util.List">
+		select
+		<include refid="base_column_list" />
+		from t_user_extra where user_id in
+		<foreach item="item" index="index" collection="userIds" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	
+	<select id="listUserExtraByChannel" resultMap="userExtraMap">
+		select
+		<include refid="base_column_list" />
+		from t_user_extra where 1=1
+		
+		<if test="channel != null">
+			and	channel = #{channel}
+		</if>
+		
+		and create_time &gt;= #{startTime}::timestamp
+		and create_time &lt; #{endTime}::timestamp
+		
+		order by id desc
+		<if test="pageSize != null and  offset != null">
+			limit #{pageSize} offset #{offset}
+		</if>
+	</select>
+
+</mapper>

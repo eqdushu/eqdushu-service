@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.eqdushu.server.mapper.company.CompanyMapper">
+
+	<!-- 配置 产品 sqlMap -->
+	<resultMap id="companyMap" type="com.eqdushu.server.domain.company.Company">
+		<id column="id" property="id" jdbcType="BIGINT" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="province_id" property="provinceId" jdbcType="VARCHAR" />
+		<result column="city_id" property="cityId" jdbcType="VARCHAR" />
+		<result column="remark" property="remark" jdbcType="VARCHAR" />
+		<result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+		<result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+
+	<sql id="base_column_list">
+		id,name,address,province_id,city_id,remark,code,create_time,update_time
+	</sql>
+	
+	<sql id="insert_column_list">
+		name,address,province_id,city_id,remark,code,create_time,update_time
+	</sql>
+
+	<insert id="create" useGeneratedKeys="true" keyProperty="id" parameterType="com.eqdushu.server.domain.company.Company">
+		insert into t_company(
+		<include refid="insert_column_list" />
+		)values
+		(#{name,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{provinceId,jdbcType=VARCHAR},#{cityId,jdbcType=VARCHAR},
+		#{remark,jdbcType=VARCHAR},#{code,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP},#{updateTime,jdbcType=TIMESTAMP})
+	</insert>
+
+	<update id="update" parameterType="com.eqdushu.server.domain.company.Company">
+		update t_company
+		<set>
+			<if test="name != null">
+				name = #{name},
+			</if>
+			<if test="address != null">
+				address = #{address},
+			</if>
+			<if test="provinceId != null">
+				province_id = #{provinceId},
+			</if>
+			<if test="cityId != null">
+				city_id = #{cityId},
+			</if>
+			<if test="remark != null">
+				remark = #{remark},
+			</if>
+			<if test="code != null">
+				code = #{code},
+			</if>
+			<if test="updateTime != null">
+				update_time = #{updateTime},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+
+	<select id="getById" resultMap="companyMap" parameterType="java.lang.Long">
+		select
+		<include refid="base_column_list" />
+		from t_company where id=#{id}
+	</select>
+	
+	<select id="getByCode" resultMap="companyMap" parameterType="java.lang.String">
+		select
+		<include refid="base_column_list" />
+		from t_company where code=#{code}
+	</select>
+	
+	<select id="listByIds" resultMap="companyMap" parameterType="java.util.List">
+		select
+		<include refid="base_column_list" />
+		from t_company where id in
+		<foreach item="item" index="index" collection="companyIds" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+
+</mapper>
