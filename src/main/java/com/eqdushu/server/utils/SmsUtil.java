@@ -30,7 +30,7 @@ public class SmsUtil {
             rep.setMsgState("下发短信请求类型错误");
             return rep;
         }
-        String PostData = "sname=dlzhanghua&spwd=zh111111&scorpid=&sprdid=1012888&sdst="+sms.getMblNo()+"&smsg="+ URLEncoder.encode(content,"utf-8");
+        String PostData = "sname=dlzhanghua0&spwd=zh112233&scorpid=&sprdid=1012888&sdst="+sms.getMblNo()+"&smsg="+ URLEncoder.encode(content,"utf-8");
         String result = SMS(PostData, "http://cf.51welink.com/submitdata/Service.asmx/g_Submit");
         LMobileRep rep = XMLParseUtil.extract(result);
         return rep;
@@ -73,7 +73,7 @@ public class SmsUtil {
     }
     public static void main(String[] args)throws Exception{
 
-        String PostData = "sname=dlzhanghua&spwd=zh111111&scorpid=&sprdid=1012888&sdst=13574856074&smsg="+ URLEncoder.encode("您的验证码是：658218，5分钟有效【EQ读书】","utf-8");
+        String PostData = "sname=dlzhanghua0&spwd=zh112233&scorpid=&sprdid=1012888&sdst=13574856074&smsg="+ URLEncoder.encode("您的验证码是：658218，5分钟有效【EQ读书】","utf-8");
 //        String PostData = "sname=dlzhanghua&spwd=zh111111&scorpid=&sprdid=1112888&sdst=13574856074&smsg="+ URLEncoder.encode("您的验证码是：658218，5分钟有效【EQ读书】","utf-8");
 
         //out.println(PostData);

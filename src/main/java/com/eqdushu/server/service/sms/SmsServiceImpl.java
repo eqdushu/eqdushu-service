@@ -69,7 +69,7 @@ public class SmsServiceImpl implements  ISmsService{
     public boolean checkSms(String mblNo,String smsCode) {
         String smsRedisKey = "msg:" + mblNo;
         //判断是否存在
-        Object obj = (String) redisTemplate.boundValueOps(smsRedisKey).get();
+        Object obj = redisTemplate.boundValueOps(smsRedisKey).get();
         if(null==obj){
             return false;
         }
